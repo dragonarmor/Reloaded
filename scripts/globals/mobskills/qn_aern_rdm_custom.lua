@@ -1,0 +1,25 @@
+---------------------------------------------------
+-- Chainspell
+-- Meant for Qn'aern (RDM) with Ix'Aern encounter
+---------------------------------------------
+require("scripts/globals/monstertpmoves");
+require("scripts/globals/status");
+require("scripts/globals/msg");
+---------------------------------------------
+
+function onMobSkillCheck(target,mob,skill)
+    if (mob:getID() == 16916816) then
+        if (mob:getHPP() <= 70) then
+            return 0;
+        end
+    end;
+    return 1;
+end;
+
+function onMobWeaponSkill(target, mob, skill)
+    local typeEffect = EFFECT_CHAINSPELL;
+    MobBuffMove(mob, typeEffect, 1, 0, 60);
+
+    skill:setMsg(msgBasic.USES);
+    return typeEffect;
+end;

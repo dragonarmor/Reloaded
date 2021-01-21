@@ -1,0 +1,24 @@
+-----------------------------------
+-- Area: Bastok Markets
+--  NPC: Domhnall
+-- Type: Standard Info NPC
+-- !pos -104.611 -5.825 -81.531 235
+-----------------------------------
+
+function onTrade(player,npc,trade)
+end;
+
+function onTrigger(player,npc)
+    player:startEvent(117);
+end;
+
+function onEventUpdate(player,csid,option)
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
+end;
+
+function onEventFinish(player,csid,option)
+    -- printf("CSID: %u",csid);
+    -- printf("RESULT: %u",option);
+end;
+

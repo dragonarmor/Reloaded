@@ -1,0 +1,67 @@
+---------------------------------------------------------------------------------------------------
+-- func: return <player>
+-- desc: Warps GM or target player to their previous zone
+---------------------------------------------------------------------------------------------------
+
+cmdprops =
+{
+    permission = 1,
+    parameters = "s"
+};
+
+function error(player, msg)
+    player:PrintToPlayer(msg);
+    player:PrintToPlayer("!return {player}");
+end;
+
+function onTrigger(player, target)
+
+    -- validate target
+    local targ;
+    if (target == nil) then
+        targ = player;
+    else
+        targ = GetPlayerByName(target);
+        if (targ == nil) then
+            error(player, string.format( "Player named '%s' not found!", target ) );
+            return;
+        end
+    end
+
+    -- get previous zone
+    zoneId = targ:getPreviousZone();
+    if (zoneId == nil or zoneId == 0 or zoneId == 214) then
+        error(player, "Previous zone was a Mog House or there was a problem fetching the ID.");
+        return;
+    end
+
+    if (targ:getVar("inJail") > 0 and targ:getZoneID() == 131) then
+        player:PrintToPlayer("CANNOT TELEPORT JAILED CHARACTER!");
+        return;
+    end
+
+    -- Log it
+    if (targ:getID() ~= player:getID()) then
+        local dateStamp = os.date("%d/%m/%Y");
+        local timeStamp = os.date("%I:%M:%S %p");
+        local file = io.open("log/commands/return.log", "a");
+        file:write(
+        "----------------------------------------",
+        "\n", "Date: ".. dateStamp,
+        "\n", "Time: ".. timeStamp,
+        "\n", "User: ".. player:getName(),
+        "\n", "Target: ".. targ:getName(),
+        "\n", "Sent from Zone: ".. targ:getZoneID(),
+        "\n", "Sent to Zone: ".. zoneId,
+        "\n",
+        "\n" -- This MUST be final line.
+        );
+        file:close();
+    end
+
+    -- zone target
+    targ:setPos( 0, 0, 0, 0, zoneId );
+    if (targ:getID() ~= player:getID()) then
+        player:PrintToPlayer( string.format( "%s was returned to zone %i.", targ:getName(), zoneId ) );
+    end
+end
